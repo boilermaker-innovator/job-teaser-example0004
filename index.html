@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings with Teaser Popup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .job-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .job-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .job-title {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .job-info {
+            margin: 5px 0;
+            color: #666;
+        }
+        .teaser-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .teaser-button:hover {
+            background-color: #2980b9;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+        }
+        .tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="job-list">
+        <h1>Current Job Openings</h1>
+        
+        <div class="job-item">
+            <h2 class="job-title">Software Developer</h2>
+            <p class="job-info"><strong>Location:</strong> Sydney, NSW</p>
+            <p class="job-info"><strong>Salary:</strong> $90,000 - $120,000 per year</p>
+            <button class="teaser-button" onclick="openTeaser('job1')">View Job Teaser</button>
+        </div>
+
+        <div class="job-item">
+            <h2 class="job-title">Boilermaker - FIFO</h2>
+            <p class="job-info"><strong>Location:</strong> Perth, WA</p>
+            <p class="job-info"><strong>Salary:</strong> $55 - $70 per hour</p>
+            <button class="teaser-button" onclick="openTeaser('job2')">View Job Teaser</button>
+        </div>
+
+        <div class="job-item">
+            <h2 class="job-title">Marketing Manager</h2>
+            <p class="job-info"><strong>Location:</strong> Melbourne, VIC</p>
+            <p class="job-info"><strong>Salary:</strong> $85,000 - $110,000 per year</p>
+            <button class="teaser-button" onclick="openTeaser('job3')">View Job Teaser</button>
+        </div>
+
+        <div class="job-item">
+            <h2 class="job-title">Registered Nurse</h2>
+            <p class="job-info"><strong>Location:</strong> Brisbane, QLD</p>
+            <p class="job-info"><strong>Salary:</strong> $65,000 - $80,000 per year</p>
+            <button class="teaser-button" onclick="openTeaser('job4')">View Job Teaser</button>
+        </div>
+
+        <div class="job-item">
+            <h2 class="job-title">Civil Engineer</h2>
+            <p class="job-info"><strong>Location:</strong> Adelaide, SA</p>
+            <p class="job-info"><strong>Salary:</strong> $80,000 - $100,000 per year</p>
+            <button class="teaser-button" onclick="openTeaser('job5')">View Job Teaser</button>
+        </div>
+    </div>
+
+    <div id="teaserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTeaser()">&times;</span>
+            <div id="teaserContent">
+                <h2 id="modalJobTitle"></h2>
+                <div class="tab">
+                    <button class="tablinks active" onclick="openTab(event, 'Overview')">Overview</button>
+                    <button class="tablinks" onclick="openTab(event, 'Responsibilities')">Responsibilities</button>
+                    <button class="tablinks" onclick="openTab(event, 'Requirements')">Requirements</button>
+                </div>
+
+                <div id="Overview" class="tabcontent" style="display:block;"></div>
+                <div id="Responsibilities" class="tabcontent"></div>
+                <div id="Requirements" class="tabcontent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var modal = document.getElementById("teaserModal");
+
+        function openTeaser(jobId) {
+            var modalTitle = document.getElementById("modalJobTitle");
+            var overview = document.getElementById("Overview");
+            var responsibilities = document.getElementById("Responsibilities");
+            var requirements = document.getElementById("Requirements");
+
+            switch(jobId) {
+                case 'job1':
+                    modalTitle.innerText = "Software Developer";
+                    overview.innerHTML = `
+                        <p><strong>Location:</strong> Sydney, NSW</p>
+                        <p><strong>Salary:</strong> $90,000 - $120,000 per year</p>
+                        <p><strong>Type:</strong> Full-time</p>
+                        <p>Join our dynamic team as a Software Developer and contribute to cutting-edge projects.</p>
+                    `;
+                    responsibilities.innerHTML = `
+                        <ul>
+                            <li>Develop and maintain software applications</li>
+                            <li>Collaborate with cross-functional teams</li>
+                            <li>Participate in code reviews</li>
+                            <li>Troubleshoot and debug applications</li>
+                        </ul>
+                    `;
+                    requirements.innerHTML = `
+                        <ul>
+                            <li>Bachelor's degree in Computer Science or related field</li>
+                            <li>Proficiency in Java, Python, or C++</li>
+                            <li>Experience with web development frameworks</li>
+                            <li>Strong problem-solving skills</li>
+                        </ul>
+                    `;
+                    break;
+                case 'job2':
+                    modalTitle.innerText = "Boilermaker - FIFO";
+                    overview.innerHTML = `
+                        <p><strong>Location:</strong> Perth, WA</p>
+                        <p><strong>Salary:</strong> $55 - $70 per hour</p>
+                        <p><strong>Type:</strong> Full-time, FIFO</p>
+                        <p>Join our team of skilled Boilermakers for FIFO work in Western Australia.</p>
+                    `;
+                    responsibilities.innerHTML = `
+                        <ul>
+                            <li>Fabricate and assemble structural metal products</li>
+                            <li>Interpret technical drawings and blueprints</li>
+                            <li>Operate various welding equipment and techniques</li>
+                            <li>Conduct quality control and safety checks</li>
+                        </ul>
+                    `;
+                    requirements.innerHTML = `
+                        <ul>
+                            <li>Certified Boilermaker qualification</li>
+                            <li>Minimum 3 years experience in mining or construction</li>
+                            <li>FIFO experience preferred</li>
+                            <li>Strong focus on safety and quality</li>
+                        </ul>
+                    `;
+                    break;
+                case 'job3':
+                    modalTitle.innerText = "Marketing Manager";
+                    overview.innerHTML = `
+                        <p><strong>Location:</strong> Melbourne, VIC</p>
+                        <p><strong>Salary:</strong> $85,000 - $110,000 per year</p>
+                        <p><strong>Type:</strong> Full-time</p>
+                        <p>Lead our marketing efforts and drive brand growth in this exciting role.</p>
+                    `;
+                    responsibilities.innerHTML = `
+                        <ul>
+                            <li>Develop and implement marketing strategies</li>
+                            <li>Manage marketing budget and analyze ROI</li>
+                            <li>Lead a team of marketing professionals</li>
+                            <li>Collaborate with sales and product teams</li>
+                        </ul>
+                    `;
+                    requirements.innerHTML = `
+                        <ul>
+                            <li>Bachelor's degree in Marketing or related field</li>
+                            <li>5+ years of marketing experience</li>
+                            <li>Strong analytical and leadership skills</li>
+                            <li>Experience with digital marketing platforms</li>
+                        </ul>
+                    `;
+                    break;
+                case 'job4':
+                    modalTitle.innerText = "Registered Nurse";
+                    overview.innerHTML = `
+                        <p><strong>Location:</strong> Brisbane, QLD</p>
+                        <p><strong>Salary:</strong> $65,000 - $80,000 per year</p>
+                        <p><strong>Type:</strong> Full-time, shift work</p>
+                        <p>Join our dedicated healthcare team and make a difference in patients' lives.</p>
+                    `;
+                    responsibilities.innerHTML = `
+                        <ul>
+                            <li>Provide high-quality patient care</li>
+                            <li>Administer medications and treatments</li>
+                            <li>Collaborate with doctors and other healthcare professionals</li>
+                            <li>Maintain accurate patient records</li>
+                        </ul>
+                    `;
+                    requirements.innerHTML = `
+                        <ul>
+                            <li>Bachelor of Nursing degree</li>
+                            <li>Current registration with AHPRA</li>
+                            <li>Minimum 2 years of clinical experience</li>
+                            <li>Excellent communication and interpersonal skills</li>
+                        </ul>
+                    `;
+                    break;
+                case 'job5':
+                    modalTitle.innerText = "Civil Engineer";
+                    overview.innerHTML = `
+                        <p><strong>Location:</strong> Adelaide, SA</p>
+                        <p><strong>Salary:</strong> $80,000 - $100,000 per year</p>
+                        <p><strong>Type:</strong> Full-time</p>
+                        <p>Design and oversee construction projects in this rewarding engineering role.</p>
+                    `;
+                    responsibilities.innerHTML = `
+                        <ul>
+                            <li>Design infrastructure projects</li>
+                            <li>Conduct site investigations and feasibility studies</li>
+                            <li>Ensure compliance with safety and environmental regulations</li>
+                            <li>Manage project timelines and budgets</li>
+                        </ul>
+                    `;
+                    requirements.innerHTML = `
+                        <ul>
+                            <li>Bachelor's degree in Civil Engineering</li>
+                            <li>Professional engineering certification</li>
+                            <li>3+ years of experience in civil engineering</li>
+                            <li>Proficiency in CAD software</li>
+                        </ul>
+                    `;
+                    break;
+            }
+
+            modal.style.display = "block";
+        }
+
+        function closeTeaser() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+            tablinks = document.getElementsByClassName("tablinks");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            document.getElementById(tabName).style.display = "block";
+            evt.currentTarget.className += " active";
+        }
+    </script>
+</body>
+</html>
