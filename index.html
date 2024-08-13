@@ -328,3 +328,213 @@
     </script>
 </body>
 </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings with Bottom Tabs Teaser</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .job-list {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .job-item {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .job-title {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        .job-info {
+            margin: 5px 0;
+            color: #666;
+        }
+        .teaser-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .teaser-button:hover {
+            background-color: #2980b9;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            height: 70vh;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .tab {
+            overflow: hidden;
+            border-top: 1px solid #ccc;
+            background-color: #f1f1f1;
+            display: flex;
+            margin-top: auto;
+        }
+        .tab button {
+            background-color: inherit;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+            font-size: 14px;
+            flex-grow: 1;
+        }
+        .tab button:hover {
+            background-color: #ddd;
+        }
+        .tab button.active {
+            background-color: #ccc;
+        }
+        .tabcontent {
+            display: block;
+            padding: 6px 12px;
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="job-list">
+        <h1>Current Job Openings</h1>
+        
+        <div class="job-item">
+            <h2 class="job-title">Software Developer</h2>
+            <p class="job-info"><strong>Location:</strong> Sydney, NSW</p>
+            <p class="job-info"><strong>Salary:</strong> $90,000 - $120,000 per year</p>
+            <button class="teaser-button" onclick="openTeaser('job1')">View Job Teaser</button>
+        </div>
+
+        <!-- More job items here... -->
+
+    </div>
+
+    <div id="teaserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTeaser()">&times;</span>
+            <h2 id="modalJobTitle"></h2>
+            <div id="tabContent" class="tabcontent"></div>
+            <div class="tab">
+                <button class="tablinks" onclick="openTab(event, 'Overview')">Overview</button>
+                <button class="tablinks" onclick="openTab(event, 'Responsibilities')">Responsibilities</button>
+                <button class="tablinks" onclick="openTab(event, 'Requirements')">Requirements</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var modal = document.getElementById("teaserModal");
+        var jobData = {
+            job1: {
+                title: "Software Developer",
+                overview: `
+                    <p><strong>Location:</strong> Sydney, NSW</p>
+                    <p><strong>Salary:</strong> $90,000 - $120,000 per year</p>
+                    <p><strong>Type:</strong> Full-time</p>
+                    <p>Join our dynamic team as a Software Developer and contribute to cutting-edge projects.</p>
+                `,
+                responsibilities: `
+                    <ul>
+                        <li>Develop and maintain software applications</li>
+                        <li>Collaborate with cross-functional teams</li>
+                        <li>Participate in code reviews</li>
+                        <li>Troubleshoot and debug applications</li>
+                    </ul>
+                `,
+                requirements: `
+                    <ul>
+                        <li>Bachelor's degree in Computer Science or related field</li>
+                        <li>Proficiency in Java, Python, or C++</li>
+                        <li>Experience with web development frameworks</li>
+                        <li>Strong problem-solving skills</li>
+                    </ul>
+                `
+            },
+            // Add other job data here...
+        };
+
+        function openTeaser(jobId) {
+            var job = jobData[jobId];
+            document.getElementById("modalJobTitle").innerText = job.title;
+            openTab(null, 'Overview');
+            modal.style.display = "block";
+        }
+
+        function closeTeaser() {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function openTab(evt, tabName) {
+            var tabContent = document.getElementById("tabContent");
+            var tablinks = document.getElementsByClassName("tablinks");
+            
+            for (var i = 0; i < tablinks.length; i++) {
+                tablinks[i].className = tablinks[i].className.replace(" active", "");
+            }
+            
+            tabContent.innerHTML = jobData.job1[tabName.toLowerCase()];
+            
+            if (evt) {
+                evt.currentTarget.className += " active";
+            } else {
+                tablinks[0].className += " active";
+            }
+        }
+    </script>
+</body>
+</html>
